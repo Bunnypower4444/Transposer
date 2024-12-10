@@ -33,8 +33,12 @@ class Transposer
     public static draw(graphics: p5.Graphics | p5.Renderer, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
     {
         graphics.push();
+        graphics.textFont(MainFont);
 
-        let textSize = 0.8 * bounds.y / 4;
+        const AnimationTime = 2;
+
+        DrawUtils.textWidth("P - (I + K) = P - (I + K)", MainFont, 16, NORMAL);
+        
 
         graphics.pop();
     }

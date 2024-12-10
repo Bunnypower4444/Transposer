@@ -14,13 +14,14 @@ let endingKey             = KeyConcertC;
 //#region Canvas
 
 const WindowAspect = 2;
-const MainFont = "Trebuchet MS";
+const WindowWidth = 1000;
+const MainFont = "Times New Roman";
 const BackgroundColor = "antiquewhite";
 
 function setup()
 {
     // Setup the canvas
-    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, 1000, null);
+    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
 
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0") as HTMLCanvasElement);
 }
