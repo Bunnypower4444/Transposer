@@ -37,8 +37,12 @@ class Transposer
 
         const AnimationTime = 2;
 
-        DrawUtils.textWidth("P - (I + K) = P - (I + K)", MainFont, 16, NORMAL);
-        
+        let width1 =
+            DrawUtils.textWidth("P - (I + K) = P - (I + K)", MainFont, 16, NORMAL) +
+            DrawUtils.textWidth("000fff", MainFont, 8, NORMAL) / 2;
+
+        if (width1 > bounds.x)
+        {}
 
         graphics.pop();
     }
