@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="../p5/p5-1.9.4.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta charset="utf-8" />
+
+</head>
+
+<body>
+	<main>
+		<div class="input">
+			<h3>Transposition Calculator</h3>
+
+			Note
+			<select id="noteInput" class="noteSelect"></select>
+			<input id="noteOctaveInput" type="number" min="-1" max="9" value="4">
+			in the key of
+			<select id="keyInput" class="noteSelectKey"></select>
+			of an instrument in the key of
+			<select id="instrumentKeyInput" class="noteSelectKey"></select>
+			→the key of
+			<select id="outKeyInput" class="noteSelectKey"></select>
+			of an instrument in the key of
+			<select id="outInstrumentKeyInput" class="noteSelectKey"></select>
+
+			<br>
+
+			<button onclick="calculate();">Calculate!</button>
+		</div>
+		<canvas id="defaultCanvas0"></canvas>
+	</main>
+
+	<!--put these options in every element of class "noteSelect"-->
+	<script>
+		(function ()
+		{
+			const OptionsNotes = 
+			`	<option value="0" >B♯/C </option>
+				<option value="1" >C♯/D♭</option>
+				<option value="2" >D    </option>
+				<option value="3" >D♯/E♭</option>
+				<option value="4" >E/F♭ </option>
+				<option value="5" >E♯/F </option>
+				<option value="6" >F♯/G♭</option>
+				<option value="7" >G    </option>
+				<option value="8" >G♯/A♭</option>
+				<option value="9" >A    </option>
+				<option value="10">A♯/B♭</option>
+				<option value="11">B/C♭ </option>`;
+			let noteSelects = document.getElementsByClassName("noteSelect");
+
+			for (let i = 0; i < noteSelects.length; i++)
+			{
+				noteSelects[i].innerHTML = OptionsNotes + noteSelects[i].innerHTML;
+			}
+
+			const OptionsNotesKey = 
+			`	<option value="0" >B♯/C </option>
+				<option value="1" >C♯/D♭</option>
+				<option value="2" >D    </option>
+				<option value="3" >D♯/E♭</option>
+				<option value="4" >E/F♭ </option>
+				<option value="5" >E♯/F </option>
+				<option value="6" >F♯/G♭</option>
+				<option value="-5">G    </option>
+				<option value="-4">G♯/A♭</option>
+				<option value="-3">A    </option>
+				<option value="-2">A♯/B♭</option>
+				<option value="-1">B/C♭ </option>`;
+			let noteSelectsKey = document.getElementsByClassName("noteSelectKey");
+
+			for (let i = 0; i < noteSelectsKey.length; i++)
+			{
+				noteSelectsKey[i].innerHTML = OptionsNotesKey + noteSelectsKey[i].innerHTML;
+			}
+		})();
+	</script>
+
+	<script src="out/helpers.js"></script>
+	<script src="out/calculator.js"></script>
+	<script src="out/sketch.js"></script>
+
+</body>
+</html>

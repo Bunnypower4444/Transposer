@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "pretty": true,
+    "outDir": "out"
+  },
+  "include": [
+    "src/*.ts",
+    "src/**/*.ts",
+    "/Users/yinqian/.vscode/extensions/samplavigne.p5-vscode-1.2.*/p5types/global.d.ts"
+  ],
+  "compileOnSave": true,
+}
