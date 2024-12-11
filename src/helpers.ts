@@ -1,11 +1,9 @@
 
-namespace p5
-{
-    export type Graphics = typeof globalThis;
-    export type Renderer = typeof globalThis;
-}
+type Renderer = typeof globalThis;
+type Graphics = typeof globalThis;
+type RenderTarget = Graphics | Renderer;
 
-declare function createCanvas(w: number, h: number, canvas: HTMLCanvasElement): p5.Renderer;
+declare function createCanvas(w: number, h: number, canvas: HTMLCanvasElement): Renderer;
 
 class CanvasUtils
 {
@@ -56,13 +54,13 @@ class DrawUtils
      * @param w The horizontal distance of the line
      * @param h The vertical distance of the line
      */
-    public static line(x: number, y: number, w: number, h: number, graphics: p5.Graphics | p5.Renderer = window)
+    public static line(x: number, y: number, w: number, h: number, graphics: RenderTarget = window)
     {
         graphics.line(x, y, x + w, y + h);
     }
 
     public static text(font: string, textString: string, x: number, y: number, size?: number,
-        justifyX: TextAlignHoriz = CENTER, justifyY: TextAlignVert = CENTER, rotation: number = 0, graphics: p5.Graphics | p5.Renderer = window)
+        justifyX: TextAlignHoriz = CENTER, justifyY: TextAlignVert = CENTER, rotation: number = 0, graphics: RenderTarget = window)
     {
         if (size === undefined || size === null)
             size = graphics.textSize();
@@ -134,13 +132,18 @@ type TextStyle = typeof NORMAL | typeof BOLD | typeof ITALIC | typeof BOLDITALIC
 type TextAlignHoriz = typeof LEFT | typeof CENTER | typeof RIGHT;
 type TextAlignVert = typeof TOP | typeof CENTER | typeof BOTTOM | typeof BASELINE;
 
-class Vector2 {
-    x: number;
-    y: number;
+type ColorLike = number | string | number[];
 
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+class Vector2 {
+    constructor(public x: number, public y: number) {}
+
+    public clone(): Vector2 {
+        return new Vector2(this.x, this.y);
+    }
+
+    public copy(destination: Vector2) {
+        destination.x = this.x;
+        destination.y = this.y;
     }
 
     /**

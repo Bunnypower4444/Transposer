@@ -30,19 +30,22 @@ class Transposer
         return pitch - startInst - startKey + endInst + endKey;
     }
 
-    public static draw(graphics: p5.Graphics | p5.Renderer, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
+    public static draw(graphics: RenderTarget, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
     {
         graphics.push();
         graphics.textFont(MainFont);
 
         const AnimationTime = 2;
+        const Padding = 8;
 
+        let size1 = 16;
         let width1 =
             DrawUtils.textWidth("P - (I + K) = P - (I + K)", MainFont, 16, NORMAL) +
             DrawUtils.textWidth("000fff", MainFont, 8, NORMAL) / 2;
 
-        if (width1 > bounds.x)
-        {}
+        // scale text to fit inside bounds
+        if (width1 > bounds.x - 2 * Padding)
+            size1 = size1 * (bounds.x - 2 * Padding) / width1;
 
         graphics.pop();
     }
