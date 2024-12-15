@@ -2,6 +2,11 @@
 class FancyText
 {
     public segments: FancyText.TextSegment[];
+
+    public constructor(segments: FancyText.TextSegment[])
+    {
+        this.segments = segments;
+    }
 }
 
 namespace FancyText

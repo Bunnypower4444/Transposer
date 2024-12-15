@@ -2,13 +2,11 @@
 const MiddleC = 60;
 const KeyConcertC = 0;
 
+/**
+ * An animation for transposing notes.
+ */
 class Transposer
 {
-    private constructor()
-    {
-        throw new TypeError("Cannot make instance of Transposer");
-    }
-
     public static transpose(pitch: number, startInst: number, startKey: number, endInst: number, endKey: number): number
     {
         /*
@@ -30,7 +28,17 @@ class Transposer
         return pitch - startInst - startKey + endInst + endKey;
     }
 
-    public static draw(graphics: RenderTarget, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
+    public lines: FancyText[];
+    
+    public setParameters(pitch: number, startInst: number, startKey: number, endInst: number, endKey: number): void
+    {
+        this.lines = [];
+        this.lines.push(new FancyText([
+            { text: "P", properties: { color: 0, subSuperScript: FancyText.TextProperties.SubSuperScript.Normal} }
+        ]));
+    }
+
+    public draw(graphics: RenderTarget, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
     {
         graphics.push();
         graphics.textFont(MainFont);
