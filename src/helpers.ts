@@ -163,6 +163,14 @@ class Vector2 {
     static fromAngleDegrees(angle: number, magnitude: number): Vector2 {
         return new Vector2(magnitude * Math.cos(angle * Math.PI/180), magnitude * Math.sin(angle * Math.PI/180));
     }
+
+    /**
+     * Creates a new `Vector2` with the value <0, 0>
+     */
+    static get zero(): Vector2
+    {
+        return new Vector2(0, 0);
+    }
     
     /**
      * Returns a vector with the mouse coordinates. If the sketch has not been set up yet, returns undefined.

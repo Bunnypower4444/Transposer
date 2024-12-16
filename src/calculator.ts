@@ -12,7 +12,7 @@ class Transposer
         /*
         instrument keys: key of _ -> concert _ = instrument C
         key signatures: key of _ -> concert _ = key C (do)
-        key = instkey + keysig
+        key = -instkey + keysig
         transposedpitch = transposed C + offset
         concertpitch = C + offset
 
@@ -22,8 +22,8 @@ class Transposer
         concertpitch = transposedpitch - key
 
         startpitch and endpitch are in transposed keys (aka not concert)
-        startpitch - (startinst + startkey) = endpitch - (endinst + endkey)
-        endpitch = startpitch - (startinst + startkey) + (endinst + endkey)
+        startpitch - (-startinst + startkey) = endpitch - (-endinst + endkey)
+        endpitch = startpitch - (-startinst + startkey) + (-endinst + endkey)
         */
         return pitch - startInst - startKey + endInst + endKey;
     }
@@ -33,9 +33,9 @@ class Transposer
     public setParameters(pitch: number, startInst: number, startKey: number, endInst: number, endKey: number): void
     {
         this.lines = [];
-        this.lines.push(new FancyText([
-            { text: "P", properties: { color: 0, subSuperScript: FancyText.TextProperties.SubSuperScript.Normal} }
-        ]));
+        /* this.lines.push(new FancyText([
+            { text: "P", properties: { color: 0, script: FancyText.TextProperties.Script.Normal, style: NORMAL} }
+        ])); */
     }
 
     public draw(graphics: RenderTarget, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
