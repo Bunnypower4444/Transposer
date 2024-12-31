@@ -34,20 +34,20 @@ class DrawUtils {
      * @param w The horizontal distance of the line
      * @param h The vertical distance of the line
      */
-    static line(x, y, w, h) {
-        line(x, y, x + w, y + h);
+    static line(x, y, w, h, graphics = window) {
+        graphics.line(x, y, x + w, y + h);
     }
-    static text(font, textString, x, y, size, justifyX = CENTER, justifyY = CENTER, rotation = 0) {
+    static text(font, textString, x, y, size, justifyX = CENTER, justifyY = CENTER, rotation = 0, graphics = window) {
         if (size === undefined || size === null)
-            size = textSize();
-        push();
-        textFont(font);
-        textSize(size);
-        textAlign(justifyX, justifyY);
-        translate(x /*  - justifyX * DrawUtils.textWidth(textString, font, size, NORMAL) */, y /*  - justifyY * DrawUtils.textHeight(textString, font, size, NORMAL) */);
-        rotate(rotation);
-        text(textString, 0, 0);
-        pop();
+            size = graphics.textSize();
+        graphics.push();
+        graphics.textFont(font);
+        graphics.textSize(size);
+        graphics.textAlign(justifyX, justifyY);
+        graphics.translate(x /*  - justifyX * DrawUtils.textWidth(textString, font, size, NORMAL) */, y /*  - justifyY * DrawUtils.textHeight(textString, font, size, NORMAL) */);
+        graphics.rotate(rotation);
+        graphics.text(textString, 0, 0);
+        graphics.pop();
     }
     static textWidth(text, font, size, style) {
         push();
@@ -106,6 +106,13 @@ class Vector2 {
         this.x = x;
         this.y = y;
     }
+    clone() {
+        return new Vector2(this.x, this.y);
+    }
+    copy(destination) {
+        destination.x = this.x;
+        destination.y = this.y;
+    }
     /**
      * Creates a new `Vector2` from a given angle (in radians) and magnitude.
      * @param angle Angle (radians)
@@ -123,6 +130,12 @@ class Vector2 {
         return new Vector2(magnitude * Math.cos(angle * Math.PI / 180), magnitude * Math.sin(angle * Math.PI / 180));
     }
     /**
+     * Creates a new `Vector2` with the value <0, 0>
+     */
+    static get zero() {
+        return new Vector2(0, 0);
+    }
+    /**
      * Returns a vector with the mouse coordinates. If the sketch has not been set up yet, returns undefined.
      */
     static getMousePositionVector() {
@@ -132,6 +145,12 @@ class Vector2 {
         catch (err) {
             return undefined;
         }
+    }
+    withX(x) {
+        return new Vector2(x, this.y);
+    }
+    withY(y) {
+        return new Vector2(this.x, y);
     }
     add(other) {
         return new Vector2(this.x + other.x, this.y + other.y);

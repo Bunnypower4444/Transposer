@@ -6,20 +6,21 @@ let startingInstrumentKey = KeyConcertC;
 let startingKey = KeyConcertC;
 let endingInstrumentKey = KeyConcertC;
 let endingKey = KeyConcertC;
+let transposer = new Transposer();
 //#endregion
 //#region Canvas
 const WindowAspect = 2;
-const MainFont = "Trebuchet MS";
+const WindowWidth = 1000;
+const MainFont = "Times New Roman";
 const BackgroundColor = "antiquewhite";
 function setup() {
     // Setup the canvas
-    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, 1000, null);
-    //@ts-expect-error
-    // Bruh this p5.js extension isn't that good...
+    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0"));
 }
 function draw() {
     background(BackgroundColor);
+    transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, 0);
 }
 //#endregion
 //#region Input
@@ -36,5 +37,6 @@ function calculate() {
     startingKey = Number(document.getElementById("keyInput").value);
     endingInstrumentKey = Number(document.getElementById("outInstrumentKeyInput").value);
     endingKey = Number(document.getElementById("outKeyInput").value);
+    transposer.setParameters(startingPitch, startingInstrumentKey, startingKey, endingInstrumentKey, endingKey);
 }
 //#endregion

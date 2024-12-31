@@ -11,8 +11,8 @@ class Transposer
     {
         /*
         instrument keys: key of _ -> concert _ = instrument C
-        key signatures: key of _ -> concert _ = key C (do)
-        key = -instkey + keysig
+        key signatures: key of _ -> concert _ = key C (do) in instrument key
+        key = -instrument key + (keysig)
         transposedpitch = transposed C + offset
         concertpitch = C + offset
 
@@ -32,28 +32,86 @@ class Transposer
     
     public setParameters(pitch: number, startInst: number, startKey: number, endInst: number, endKey: number): void
     {
+        const Script = FancyText.TextProperties.Script;
+
         this.lines = [];
-        /* this.lines.push(new FancyText([
-            { text: "P", properties: { color: 0, script: FancyText.TextProperties.Script.Normal, style: NORMAL} }
-        ])); */
+
+        // line 1: formula
+        this.lines.push(new FancyText([
+            { text: "P", properties: { color: "green", style: ITALIC } },
+            { text: "0", properties: { color: "green", script: Script.Subscript } },
+            { text: " - (" },
+            { text: "I", properties: { color: "blue", style: ITALIC } },
+            { text: "0", properties: { color: "blue", script: Script.Subscript } },
+            { text: " + " },
+            { text: "K", properties: { color: "red", style: ITALIC } },
+            { text: "0", properties: { color: "red", script: Script.Subscript } },
+            { text: ") = " },
+
+            { text: "P", properties: { color: "purple", style: ITALIC } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
+            { text: " - (" },
+            { text: "I", properties: { color: "blue", style: ITALIC } },
+            { text: "f", properties: { color: "blue", script: Script.Subscript, style: ITALIC } },
+            { text: " + " },
+            { text: "K", properties: { color: "red", style: ITALIC } },
+            { text: "f", properties: { color: "red", script: Script.Subscript, style: ITALIC } },
+            { text: ")" }
+        ]));
+
+        // line 2: substitution
+        this.lines.push(new FancyText([
+            { text: pitch.toString(), properties: { color: "green" } },
+            { text: " - (" },
+            { text: startInst.toString(), properties: { color: "blue" } },
+            { text: " + " },
+            { text: startKey.toString(), properties: { color: "red" } },
+            { text: ") = " },
+
+            { text: "P", properties: { color: "purple", style: ITALIC } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
+            { text: " - (" },
+            { text: endInst.toString(), properties: { color: "blue" } },
+            { text: " + " },
+            { text: endKey.toString(), properties: { color: "red" } },
+            { text: ")" }
+        ]));
+
+        // line 3: rearrage
+
+        // line 4: evaluate
     }
 
-    public draw(graphics: RenderTarget, bounds: Vector2, position: Vector2, justify: Vector2, time: number): void
+    public draw(graphics: RenderTarget, sizeBounds: Vector2, position: Vector2, time: number): void
     {
+        if (!this.lines)
+            return;
+
         graphics.push();
-        graphics.textFont(MainFont);
 
         const AnimationTime = 2;
         const Padding = 8;
 
-        let size1 = 16;
-        let width1 =
-            DrawUtils.textWidth("P - (I + K) = P - (I + K)", MainFont, 16, NORMAL) +
-            DrawUtils.textWidth("000fff", MainFont, 8, NORMAL) / 2;
-
-        // scale text to fit inside bounds
-        if (width1 > bounds.x - 2 * Padding)
-            size1 = size1 * (bounds.x - 2 * Padding) / width1;
+        for (let i = 0; i < this.lines.length; i++)
+        {
+            const line = this.lines[i];
+            
+            let size = 24;
+            let width = this.lines[0].getWidth(size, MainFont);
+            
+            // scale text to fit inside bounds
+            if (width > sizeBounds.x - 2 * Padding)
+                size = size * (sizeBounds.x - 2 * Padding) / width;
+            
+            // for the textLeading
+            graphics.textFont(MainFont);
+            graphics.textSize(size);
+            const leading = textLeading();
+            
+            line.draw(graphics, position.add(
+                new Vector2(sizeBounds.x / 2, position.y + leading * (i + 0.5))),
+                size, MainFont, new Vector2(0.5, 0.5));
+        }
 
         graphics.pop();
     }

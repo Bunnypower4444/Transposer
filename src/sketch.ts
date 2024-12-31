@@ -9,6 +9,8 @@ let startingKey           = KeyConcertC;
 let endingInstrumentKey   = KeyConcertC;
 let endingKey             = KeyConcertC;
 
+let transposer = new Transposer();
+
 //#endregion
 
 //#region Canvas
@@ -29,6 +31,8 @@ function setup()
 function draw()
 {
     background(BackgroundColor);
+
+    transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, 0);
 }
 
 //#endregion
@@ -50,6 +54,10 @@ function calculate()
     startingKey           = Number((document.getElementById("keyInput") as HTMLSelectElement).value);
     endingInstrumentKey   = Number((document.getElementById("outInstrumentKeyInput") as HTMLSelectElement).value);
     endingKey             = Number((document.getElementById("outKeyInput") as HTMLSelectElement).value);
+
+    transposer.setParameters(startingPitch,
+        startingInstrumentKey, startingKey,
+        endingInstrumentKey, endingKey);
 }
 
 //#endregion

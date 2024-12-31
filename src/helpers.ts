@@ -4,6 +4,7 @@ type Graphics = typeof globalThis;
 type RenderTarget = Graphics | Renderer;
 
 declare function createCanvas(w: number, h: number, canvas: HTMLCanvasElement): Renderer;
+declare function fill(color: ColorLike): void;
 
 class CanvasUtils
 {
@@ -183,6 +184,16 @@ class Vector2 {
         }
     }
 
+    withX(x: number): Vector2
+    {
+        return new Vector2(x, this.y);
+    }
+
+    withY(y: number): Vector2
+    {
+        return new Vector2(this.x, y);
+    }
+
     add(other: Vector2) {
         return new Vector2(this.x + other.x, this.y + other.y);
     }
@@ -288,3 +299,9 @@ class NumberUtils
         return !n && n !== 0;
     }
 }
+
+/**
+ * Excludes the properties of T where U[T] is of type V
+ */
+type ExcludePropertyType<T extends string, U extends { [x: string]: any }, V>
+    = U[T] extends V ? never : T;
