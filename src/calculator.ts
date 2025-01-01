@@ -98,7 +98,7 @@ class Transposer
             { text: " + " },
             { text: "K", properties: { color: "red", style: ITALIC } },
             { text: "f", properties: { color: "red", script: Script.Subscript, style: ITALIC } },
-            { text: ") = " }
+            { text: ")" }
         ]));
 
         // line 2: substitution
