@@ -151,7 +151,7 @@ class Transposer {
             { text: pitch.toString(), properties: { color: "green" } },
             { text: " - " + ((-startInst + startKey < 0) ? "(" : "") },
             { text: (-startInst + startKey).toString() },
-            { text: (-startInst + startKey < 0) ? ")" : "" + " + " },
+            { text: ((-startInst + startKey < 0) ? ")" : "") + " + " },
             { text: (-endInst + endKey).toString() }
         ]));
         // line 5: answer
