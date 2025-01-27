@@ -3,7 +3,7 @@ class CanvasUtils {
         throw new TypeError("Cannot make instance of CanvasUtils");
     }
     /**
-     * Calculates the largest possible size of an element given an aspect ration and max dimensions.
+     * Calculates the largest possible size of an element given an aspect ratio and max dimensions.
      * @param aspectRatio The aspect ratio (width / height)
      * @param maxX The maximum allowed width (leave null if none, but then maxY is required)
      * @param maxY The maximum allowed height (leave null if none, but then maxX is required)
@@ -240,3 +240,35 @@ class NumberUtils {
         return !n && n !== 0;
     }
 }
+var Easings;
+(function (Easings) {
+    class Ease {
+        constructor($in, $out, $inout) {
+            this.in = $in;
+            this.out = $out || Ease.invert($in);
+            this.inout = $inout || Ease.follow(this.in, this.out);
+        }
+        in;
+        out;
+        inout;
+        static invert(fn) {
+            return t => 1 - fn(1 - t);
+        }
+        static follow(first, second) {
+            return t => t <= 0.5 ? 0.5 * first(2 * t) : 0.5 + 0.5 * second(2 * (t - 0.5));
+        }
+    }
+    Easings.Ease = Ease;
+    Easings.linear = new Ease(t => t);
+    Easings.quad = new Ease(t => t * t);
+    Easings.cubic = new Ease(t => t * t * t);
+    Easings.quart = new Ease(t => t * t * t * t);
+    Easings.quint = new Ease(t => t * t * t * t * t);
+    Easings.elastic = new Ease(t => t == 0 ? 0 : (0.04 - 0.04 / t) * Math.sin(25 * t) + 1);
+    Easings.sin = new Ease(t => 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2));
+    Easings.back = new Ease(t => {
+        const c1 = 1.70158;
+        const c3 = c1 + 1;
+        return c3 * t * t * t - c1 * t * t;
+    });
+})(Easings || (Easings = {}));
