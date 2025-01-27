@@ -79,7 +79,7 @@ class Transposer
 
         // line 1: formula
         // P₀ - (-I₀ + K₀) = Pf - (-If + Kf)
-        this.lines.push(new FancyText([
+        this.lines.push(FancyText.create([
             { text: "P", properties: { color: "green", style: ITALIC } },
             { text: "0", properties: { color: "green", script: Script.Subscript } },
             { text: " - (-" },
@@ -102,7 +102,7 @@ class Transposer
         ]));
 
         // line 2: substitution
-        this.lines.push(new FancyText([
+        this.lines.push(FancyText.create([
             { text: pitch.toString(), properties: { color: "green" } },
             { text: " - (-" + ((startInst < 0) ? "(" : "") },
             { text: startInst.toString(), properties: { color: "blue" } },
@@ -121,7 +121,7 @@ class Transposer
 
         // line 3: rearrange
         // Pf = P₀ - (-I₀ + K₀) + (-If + Kf)
-        this.lines.push(new FancyText([
+        this.lines.push(FancyText.create([
             { text: "P", properties: { color: "purple", style: ITALIC } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
             { text: " = " },
@@ -139,7 +139,7 @@ class Transposer
         ]));
 
         // line 4: evaluate parenthesis
-        this.lines.push(new FancyText([
+        this.lines.push(FancyText.create([
             { text: "P", properties: { color: "purple", style: ITALIC } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
             { text: " = " },
@@ -156,7 +156,7 @@ class Transposer
             pitch,
             startInst, startKey,
             endInst, endKey);
-        this.lines.push(new FancyText([
+        this.lines.push(FancyText.create([
             { text: "P", properties: { color: "purple", style: ITALIC } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
             { text: " = " },
@@ -180,7 +180,7 @@ class Transposer
             const line = this.lines[i];
             
             let size = 24;
-            let width = this.lines[0].getWidth(size, MainFont);
+            let width = FancyText.getWidth(line, size, MainFont);
             
             // scale text to fit inside bounds
             if (width > sizeBounds.x - 2 * Padding)
@@ -191,7 +191,7 @@ class Transposer
             graphics.textSize(size);
             const leading = graphics.textLeading();
             
-            line.draw(graphics, position.add(
+            FancyText.draw(line, graphics, position.add(
                 new Vector2(sizeBounds.x / 2, position.y + leading * (i + 0.5))),
                 size, MainFont, new Vector2(0.5, 0.5));
         }

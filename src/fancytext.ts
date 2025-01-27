@@ -1,22 +1,22 @@
 
-class FancyText
-{
-    public segments: FancyText.TextSegment[];
+type FancyText = FancyText.TextSegment[];
 
-    public constructor(segments: FancyText.TextSegmentData[])
+namespace FancyText
+{
+    export function create(segments: FancyText.TextSegmentData[]): FancyText
     {
-        this.segments = segments.map(v => new FancyText.TextSegment(v));
+        return segments.map(v => new FancyText.TextSegment(v));
     }
 
-    public draw(graphics: RenderTarget, position: Vector2, textSize: number, font: string, justify?: Vector2)
+    export function draw(segments: FancyText, graphics: RenderTarget, position: Vector2, textSize: number, font: string, justify?: Vector2)
     {
         graphics.push();
 
         // adjust for justify
         position = position.sub(
             justify.mult(
-                new Vector2(this.getWidth(textSize, font), textSize)));
-        for (const segment of this.segments)
+                new Vector2(getWidth(segments, textSize, font), textSize)));
+        for (const segment of segments)
         {
             segment.draw(graphics, position, textSize, font, Vector2.zero);
 
@@ -26,20 +26,17 @@ class FancyText
         graphics.pop();
     }
 
-    public getWidth(textSize: number, font: string): number
+    export function getWidth(segments: FancyText, textSize: number, font: string): number
     {
         let w = 0;
-        for (const segment of this.segments)
+        for (const segment of segments)
         {
             w += segment.getWidth(textSize, font);
         }
 
         return w;
     }
-}
 
-namespace FancyText
-{
     export const ScriptScale = 0.5;
 
     export type TextPropertiesData

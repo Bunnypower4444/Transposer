@@ -1,27 +1,28 @@
-class FancyText {
-    segments;
-    constructor(segments) {
-        this.segments = segments.map(v => new FancyText.TextSegment(v));
+var FancyText;
+(function (FancyText) {
+    function create(segments) {
+        return segments.map(v => new FancyText.TextSegment(v));
     }
-    draw(graphics, position, textSize, font, justify) {
+    FancyText.create = create;
+    function draw(segments, graphics, position, textSize, font, justify) {
         graphics.push();
         // adjust for justify
-        position = position.sub(justify.mult(new Vector2(this.getWidth(textSize, font), textSize)));
-        for (const segment of this.segments) {
+        position = position.sub(justify.mult(new Vector2(getWidth(segments, textSize, font), textSize)));
+        for (const segment of segments) {
             segment.draw(graphics, position, textSize, font, Vector2.zero);
             position = position.withX(position.x + segment.getWidth(textSize, font));
         }
         graphics.pop();
     }
-    getWidth(textSize, font) {
+    FancyText.draw = draw;
+    function getWidth(segments, textSize, font) {
         let w = 0;
-        for (const segment of this.segments) {
+        for (const segment of segments) {
             w += segment.getWidth(textSize, font);
         }
         return w;
     }
-}
-(function (FancyText) {
+    FancyText.getWidth = getWidth;
     FancyText.ScriptScale = 0.5;
     class TextProperties {
         color = 0;
