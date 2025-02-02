@@ -9,6 +9,9 @@ let startingKey           = KeyConcertC;
 let endingInstrumentKey   = KeyConcertC;
 let endingKey             = KeyConcertC;
 
+let animTime = 0;
+let totalAnimationTime = 3;
+
 let transposer = new Transposer();
 
 //#endregion
@@ -32,7 +35,8 @@ function draw()
 {
     background(BackgroundColor);
 
-    transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, 0);
+    animTime += deltaTime / 1000;
+    transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, animTime, totalAnimationTime);
 }
 
 //#endregion
@@ -58,6 +62,10 @@ function calculate()
     transposer.setParameters(startingPitch,
         startingInstrumentKey, startingKey,
         endingInstrumentKey, endingKey);
+
+    animTime = 0;
+
+    totalAnimationTime = Number((document.getElementById("totalAnimTime") as HTMLSelectElement).value);
 }
 
 //#endregion

@@ -1,4 +1,11 @@
 
+/*
+Animations:
+ * new class for it
+ * create extension of TextSegment related things
+ * Have ID property: code moves things with same ID
+ */
+
 const MiddleC = 60;
 const KeyConcertC = 0;
 
@@ -79,44 +86,48 @@ class Transposer
 
         // line 1: formula
         // P₀ - (-I₀ + K₀) = Pf - (-If + Kf)
-        this.lines.push(FancyText.create([
-            { text: "P", properties: { color: "green", style: ITALIC } },
-            { text: "0", properties: { color: "green", script: Script.Subscript } },
-            { text: " - (-" },
-            { text: "I", properties: { color: "blue", style: ITALIC } },
-            { text: "0", properties: { color: "blue", script: Script.Subscript } },
-            { text: " + " },
-            { text: "K", properties: { color: "red", style: ITALIC } },
-            { text: "0", properties: { color: "red", script: Script.Subscript } },
-            { text: ") = " },
+        this.lines.push(FancyTextAnimations.create([
+            { text: "P", properties: { color: "green", style: ITALIC, animID: "P0" } },
+            { text: "0", properties: { color: "green", script: Script.Subscript, animID: "P0" } },
+            { text: " - (-", properties: { animID: "op0" } },
+            { text: "I", properties: { color: "blue", style: ITALIC, animID: "I0" } },
+            { text: "0", properties: { color: "blue", script: Script.Subscript, animID: "I0" } },
+            { text: " + ", properties: { animID: "op1" } },
+            { text: "K", properties: { color: "red", style: ITALIC, animID: "K0" } },
+            { text: "0", properties: { color: "red", script: Script.Subscript, animID: "K0" } },
+            { text: ") = ", properties: { animID: "op2" } },
 
-            { text: "P", properties: { color: "purple", style: ITALIC } },
-            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
-            { text: " - (-" },
-            { text: "I", properties: { color: "blue", style: ITALIC } },
-            { text: "f", properties: { color: "blue", script: Script.Subscript, style: ITALIC } },
-            { text: " + " },
-            { text: "K", properties: { color: "red", style: ITALIC } },
-            { text: "f", properties: { color: "red", script: Script.Subscript, style: ITALIC } },
-            { text: ")" }
+            { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " - (-", properties: { animID: "op3" } },
+            { text: "I", properties: { color: "blue", style: ITALIC, animID: "If" } },
+            { text: "f", properties: { color: "blue", script: Script.Subscript, style: ITALIC, animID: "If" } },
+            { text: " + ", properties: { animID: "op4" } },
+            { text: "K", properties: { color: "red", style: ITALIC, animID: "Kf" } },
+            { text: "f", properties: { color: "red", script: Script.Subscript, style: ITALIC, animID: "Kf" } },
+            { text: ")", properties: { animID: "op5" } }
         ]));
 
         // line 2: substitution
-        this.lines.push(FancyText.create([
-            { text: pitch.toString(), properties: { color: "green" } },
-            { text: " - (-" + ((startInst < 0) ? "(" : "") },
-            { text: startInst.toString(), properties: { color: "blue" } },
-            { text: ((startInst < 0) ? ")" : "") + " + " },
-            { text: startKey.toString(), properties: { color: "red" } },
-            { text: ") = " },
+        this.lines.push(FancyTextAnimations.create([
+            { text: pitch.toString(), properties: { color: "green", animID: "P0" } },
+            { text: " - (-", properties: { animID: "op0" } },
+            { text: (startInst < 0) ? "(" : ""},
+            { text: startInst.toString(), properties: { color: "blue", animID: "I0" } },
+            { text: ((startInst < 0) ? ")" : "")},
+            { text: " + ", properties: { animID: "op1" } },
+            { text: startKey.toString(), properties: { color: "red", animID: "K0" } },
+            { text: ") = ", properties: { animID: "op2" } },
 
-            { text: "P", properties: { color: "purple", style: ITALIC } },
-            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
-            { text: " - (-" + ((endInst < 0) ? "(" : "") },
-            { text: endInst.toString(), properties: { color: "blue" } },
-            { text: ((endInst < 0) ? ")" : "") + " + " },
-            { text: endKey.toString(), properties: { color: "red" } },
-            { text: ")" }
+            { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " - (-", properties: { animID: "op3" } },
+            { text: ((endInst < 0) ? "(" : "") },
+            { text: endInst.toString(), properties: { color: "blue", animID: "If" } },
+            { text: ((endInst < 0) ? ")" : "") },
+            { text: " + ", properties: { animID: "op4" } },
+            { text: endKey.toString(), properties: { color: "red", animID: "Kf" } },
+            { text: ")", properties: { animID: "op5" } }
         ]));
 
         // line 3: rearrange
@@ -165,17 +176,16 @@ class Transposer
         ]));
     }
 
-    public draw(graphics: RenderTarget, sizeBounds: Vector2, position: Vector2, time: number): void
+    public draw(graphics: RenderTarget, sizeBounds: Vector2, position: Vector2, time: number, animTime: number): void
     {
         if (!this.lines)
             return;
 
         graphics.push();
 
-        const AnimationTime = 2;
-        const Padding = 8;
+        const Padding = 20;
 
-        for (let i = 0; i < this.lines.length; i++)
+        /* for (let i = 0; i < this.lines.length; i++)
         {
             const line = this.lines[i];
             
@@ -191,10 +201,13 @@ class Transposer
             graphics.textSize(size);
             const leading = graphics.textLeading();
             
-            FancyText.draw(line, graphics, position.add(
+            FancyText.draw(graphics, line, position.add(
                 new Vector2(sizeBounds.x / 2, position.y + leading * (i + 0.5))),
                 size, MainFont, new Vector2(0.5, 0.5));
-        }
+        } */
+
+        FancyTextAnimations.draw(graphics, this.lines, position.add(new Vector2(sizeBounds.x / 2, Padding)),
+            24, MainFont, this.lines.length * time / animTime, new Vector2(0.5, 0.5));
 
         graphics.pop();
     }
