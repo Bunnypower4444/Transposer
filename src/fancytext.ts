@@ -184,13 +184,53 @@ namespace FancyTextAnimations
         const leading = graphics.textLeading();
         graphics.pop();
 
+        // this will be determined when that line is drawn
         let animationStartPos: { [x: string]: [FancyText.TextSegment, Vector2][] } = {};
+
+        let animationEndPos: { [x: string]: [FancyText.TextSegment, Vector2] } = {};
+        if (t >= 1 && t < lines.length)
+        {
+            let movingIndex = Math.floor(t);                
+
+            // adjust for justify
+            let pos = position.sub(
+                justify.mult(
+                    new Vector2(FancyText.getWidth(lines[movingIndex], textSize, font), textSize)));
+
+            pos.y += movingIndex * leading;
+            
+            let positions: { [x: string]: [FancyText.TextSegment, number[]] } = {};
+            
+            for (const segment of lines[movingIndex])
+            {
+                let id = (segment.properties as AnimTextProperties).animID;
+                if (id)
+                    (positions[id] ??= [segment, []])[1].push(pos.x);
+
+                pos = pos.withX(pos.x + segment.getWidth(textSize, font));
+            }
+
+            for (const id in positions) {
+                if (Object.prototype.hasOwnProperty.call(positions, id)) {
+                    const list = positions[id];
+
+                    if (list[1].length == 1)
+                    {
+                        animationEndPos[id] = [list[0], new Vector2(list[1][0], pos.y)];
+                        continue;
+                    }
+
+                    animationEndPos[id] = [list[0], new Vector2((list[1][0] + list[1].at(-1)) / 2, pos.y)];
+                }
+            }
+        }
 
         for (let i = 0; i < lines.length; i++)
         {
             const line = lines[i];
 
-            if (t > i + 1)
+            // If this line is already fully animated
+            if (t >= i + 1)
             {
                 // adjust for justify
                 let pos = position.sub(
@@ -202,6 +242,7 @@ namespace FancyTextAnimations
                     segment.draw(graphics, pos, textSize, font, Vector2.zero);
                     
                     let id = (segment.properties as AnimTextProperties).animID;
+                    // Only add to animationStartPos if this is the last fully animated line
                     if (id && t < i + 2)
                         (animationStartPos[id] ??= []).push([segment, pos]);
 
@@ -209,7 +250,7 @@ namespace FancyTextAnimations
                 }
             }
             
-            else if (t > i)
+            else if (t >= i)
             {
                 // adjust for justify
                 let pos = position.sub(
@@ -222,29 +263,35 @@ namespace FancyTextAnimations
                     
                     if (id && animationStartPos[id])
                     {
-                        let midX = 0;
-                        for (const prev of animationStartPos[id]) {
-                            midX += prev[1].x;
-                        }
+                        const starts = animationStartPos[id];
+                        const endPos = animationEndPos[id][1];
 
-                        midX /= animationStartPos[id].length;
+                        let midX = starts.length > 0 ?
+                            (starts[0][1].x + starts.at(-1)[1].x) / 2
+                            : starts[0][1].x;
 
                         let midPos = new Vector2(midX, pos.y - leading);
-                        let easedPos = midPos.lerp(pos, Easings.sin.inout(t - i));
-                        for (const prev of animationStartPos[id])
+                        let easedPos = midPos.lerp(endPos, Easings.sin.inout(t - i));
+
+                        // Only draw previous ones once
+                        if (animationEndPos[id][0] == segment)
                         {
-                            let offset = prev[1].sub(midPos);
-                            prev[0].draw(
-                                graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i)));
+                            for (const prev of animationStartPos[id])
+                            {
+                                let offset = prev[1].sub(midPos);
+                                prev[0].draw(
+                                    graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i)));
+                            }
                         }
 
                         /* let easedPos = animationStartPos[id][0][1].lerp(pos, Easings.sin.inout(t - i));
 
                         animationStartPos[id][0].draw(
                             graphics, easedPos, textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i))); */
-                            
+                        
+                        let offset = pos.sub(endPos);
                         segment.draw(
-                            graphics, easedPos, textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
+                            graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
                     }
 
                     else

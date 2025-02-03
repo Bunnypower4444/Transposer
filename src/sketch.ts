@@ -22,6 +22,7 @@ const WindowAspect = 2;
 const WindowWidth = 1000;
 const MainFont = "Times New Roman";
 const BackgroundColor = "antiquewhite";
+const FrameRate = 60;
 
 function setup()
 {
@@ -29,14 +30,31 @@ function setup()
     let canvasSize = CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
 
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0") as HTMLCanvasElement);
+    frameRate(FrameRate);
 }
 
 function draw()
 {
     background(BackgroundColor);
 
-    animTime += deltaTime / 1000;
+    animTime += 1 / FrameRate;
     transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, animTime, totalAnimationTime);
+
+    // debugging
+    if (paused)
+    {    
+        push();
+
+        noStroke();
+        fill("darkblue");
+        textFont(MainFont);
+        textAlign(CENTER, BOTTOM);
+        textSize(24);
+        
+        text("Debug: SHIFT + ENTER = Pause/Play\tSHIFT + SPACE = Frame Advance", width / 2, height);
+
+        pop();
+    }
 }
 
 //#endregion
@@ -67,5 +85,27 @@ function calculate()
 
     totalAnimationTime = Number((document.getElementById("totalAnimTime") as HTMLSelectElement).value);
 }
+
+let paused = false;
+// DEBUGGING
+function keyPressed()
+{
+    if (!keyIsDown(SHIFT))
+        return;
+
+    if (keyCode == ENTER)
+    {
+        paused = !paused
+        if (paused)
+            noLoop();
+        else
+            loop();
+    }
+    else if (keyCode == 32)
+    {
+        redraw();
+    }
+}
+
 
 //#endregion
