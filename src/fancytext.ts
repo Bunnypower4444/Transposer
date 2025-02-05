@@ -190,7 +190,7 @@ namespace FancyTextAnimations
 
     export function create(segments: AnimTextSegmentData[]): FancyText
     {
-        return segments.map(v => new FancyText.TextSegment(v));
+        return segments.map(v => new AnimTextSegment(v));
     }
 
     /**

@@ -125,7 +125,7 @@ var FancyTextAnimations;
     }
     FancyTextAnimations.AnimTextSegment = AnimTextSegment;
     function create(segments) {
-        return segments.map(v => new FancyText.TextSegment(v));
+        return segments.map(v => new AnimTextSegment(v));
     }
     FancyTextAnimations.create = create;
     /**
