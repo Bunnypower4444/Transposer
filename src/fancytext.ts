@@ -74,15 +74,13 @@ namespace FancyText
         public text: string;
         public properties: TextProperties;
         
-        public constructor(data: TextSegmentData);
-        public constructor(text: string, properties: TextProperties)
         public constructor(
-            var1: string | TextSegmentData,
+            textOrSegmentData: string | TextSegmentData,
             properties?: TextProperties | TextPropertiesData)
         {
-            if (typeof var1 == "string")
+            if (typeof textOrSegmentData == "string")
             {
-                this.text = var1;
+                this.text = textOrSegmentData;
                 if (!properties)
                     properties = {};
                 this.properties = !(properties instanceof TextProperties) ?
@@ -90,11 +88,11 @@ namespace FancyText
             }
             else
             {
-                this.text = var1.text;
-                if (!var1.properties)
-                    var1.properties = {};
-                this.properties = !(var1.properties instanceof TextProperties) ?
-                    new TextProperties(var1.properties) : var1.properties;
+                this.text = textOrSegmentData.text;
+                if (!textOrSegmentData.properties)
+                    textOrSegmentData.properties = {};
+                this.properties = !(textOrSegmentData.properties instanceof TextProperties) ?
+                    new TextProperties(textOrSegmentData.properties) : textOrSegmentData.properties;
             }
         }
 
@@ -150,14 +148,44 @@ namespace FancyText
 
 namespace FancyTextAnimations
 {
-    export type AnimTextPropertiesData = FancyText.TextPropertiesData & { animID?: string };
+    export type AnimTextPropertiesData = FancyText.TextPropertiesData & { animID?: string | string[] };
 
     export type AnimTextSegmentData
         = { text: string; properties?: AnimTextProperties | AnimTextPropertiesData };
 
     export class AnimTextProperties extends FancyText.TextProperties
     {
-        public animID?: string;
+        public animID?: string[];
+
+        public constructor(props?: AnimTextPropertiesData)
+        {
+            if (props.animID && typeof props.animID == "string")
+                props.animID = [props.animID];
+
+            super(props);
+        }
+    }
+
+    export class AnimTextSegment extends FancyText.TextSegment
+    {
+        public constructor(data: AnimTextSegmentData);
+        public constructor(text: string, properties: AnimTextProperties)
+        public constructor(
+            var1: string | AnimTextSegmentData,
+            properties?: AnimTextProperties | AnimTextPropertiesData)
+        {
+            if (typeof var1 == "string")
+            {
+                super(var1);
+            }
+            else
+            {
+                if (properties instanceof AnimTextProperties)
+                    super(var1, properties);
+                else
+                    super(var1, new AnimTextProperties(properties));
+            }
+        }
     }
 
     export function create(segments: AnimTextSegmentData[]): FancyText
@@ -206,10 +234,10 @@ namespace FancyTextAnimations
             
             for (const segment of lines[movingIndex])
             {
-                let id = (segment.properties as AnimTextProperties).animID;
+                let ids = (segment.properties as AnimTextProperties).animID;
                 let width = segment.getWidth(textSize, font);
 
-                if (id)
+                if (ids) for (const id of ids)
                     (positions[id] ??= [segment, pos.x, 0])[2] = pos.x + width;
 
                 pos = pos.withX(pos.x + width);
@@ -241,10 +269,11 @@ namespace FancyTextAnimations
                 {
                     segment.draw(graphics, pos, textSize, font, Vector2.zero);
                     
-                    let id = (segment.properties as AnimTextProperties).animID;
+                    let ids = (segment.properties as AnimTextProperties).animID;
                     let width = segment.getWidth(textSize, font);
                     // Only add to animationStartPos if this is the last fully animated line
-                    if (id && t < i + 2)
+                    if (ids && t < i + 2)
+                        for (const id of ids)
                     {
                         (animationStartPos[id] ??= { segments: [], centerX: 0 }).segments.push([segment, pos]);
                         // For now, store rightmost point in centerX
@@ -277,9 +306,10 @@ namespace FancyTextAnimations
                 
                 for (const segment of line)
                 {
-                    let id = (segment.properties as AnimTextProperties).animID;
+                    let ids = (segment.properties as AnimTextProperties).animID;
                     
-                    if (id && animationStartPos[id])
+                    if (ids) for (const id of ids)
+                    if (animationStartPos[id])
                     {
                         const endPos = animationEndPos[id][1];
 
