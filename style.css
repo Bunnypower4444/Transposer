@@ -12,3 +12,11 @@ canvas {
   border-color: red;
   border-width: 0.3em;
 }
+
+.keyHighlight {
+  background-color: lightcoral;
+}
+
+.instkeyHighlight {
+  background-color: lightblue;
+}

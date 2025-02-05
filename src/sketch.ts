@@ -40,21 +40,23 @@ function draw()
     animTime += 1 / FrameRate;
     transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, animTime, totalAnimationTime);
 
-    // debugging
+    // pausing 
+    push();
+
+    noStroke();
+    fill("darkblue");
+    textFont(MainFont);
+    textAlign(CENTER, BOTTOM);
+    textSize(24);
+    
+    text("SHIFT + ENTER = Pause/Play\tSHIFT + SPACE = Frame Advance", width / 2, height);
     if (paused)
-    {    
-        push();
-
-        noStroke();
-        fill("darkblue");
-        textFont(MainFont);
-        textAlign(CENTER, BOTTOM);
-        textSize(24);
-        
-        text("Debug: SHIFT + ENTER = Pause/Play\tSHIFT + SPACE = Frame Advance", width / 2, height);
-
-        pop();
+    {
+        textStyle("bold");
+        text("Paused", width / 2, height - 1.5 * textLeading());
     }
+
+    pop();
 }
 
 //#endregion
@@ -87,7 +89,7 @@ function calculate()
 }
 
 let paused = false;
-// DEBUGGING
+// Pause/Unpause
 function keyPressed()
 {
     if (!keyIsDown(SHIFT))
