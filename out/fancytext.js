@@ -212,7 +212,8 @@ var FancyTextAnimations;
                 let pos = position.sub(justify.mult(new Vector2(FancyText.getWidth(line, textSize, font), textSize)));
                 for (const segment of line) {
                     let ids = segment.properties.animID;
-                    if (ids)
+                    // There will be nothing to animate from it this is the first line
+                    if (ids && i > 0) {
                         for (const id of ids)
                             if (animationStartPos[id]) {
                                 const endPos = animationEndPos[id][1];
@@ -227,15 +228,16 @@ var FancyTextAnimations;
                                     }
                                 }
                                 /* let easedPos = animationStartPos[id][0][1].lerp(pos, Easings.sin.inout(t - i));
-        
+    
                                 animationStartPos[id][0].draw(
                                     graphics, easedPos, textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i))); */
                                 let offset = pos.sub(endPos);
                                 segment.draw(graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
                             }
-                            else {
-                                segment.draw(graphics, pos, textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
-                            }
+                    }
+                    else {
+                        segment.draw(graphics, pos, textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
+                    }
                     pos = pos.withX(pos.x + segment.getWidth(textSize, font));
                 }
             }

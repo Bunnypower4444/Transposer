@@ -318,35 +318,39 @@ namespace FancyTextAnimations
                 {
                     let ids = (segment.properties as AnimTextProperties).animID;
                     
-                    if (ids) for (const id of ids)
-                    if (animationStartPos[id])
+                    // There will be nothing to animate from it this is the first line
+                    if (ids && i > 0)
                     {
-                        const endPos = animationEndPos[id][1];
-
-                        const midX = animationStartPos[id].centerX;
-
-                        let midPos = new Vector2(midX, pos.y - leading);
-                        let easedPos = midPos.lerp(endPos, Easings.sin.inout(t - i));
-
-                        // Only draw previous ones once
-                        if (animationEndPos[id][0] == segment)
+                        for (const id of ids)
+                        if (animationStartPos[id])
                         {
-                            for (const prev of animationStartPos[id].segments)
+                            const endPos = animationEndPos[id][1];
+
+                            const midX = animationStartPos[id].centerX;
+
+                            let midPos = new Vector2(midX, pos.y - leading);
+                            let easedPos = midPos.lerp(endPos, Easings.sin.inout(t - i));
+
+                            // Only draw previous ones once
+                            if (animationEndPos[id][0] == segment)
                             {
-                                let offset = prev[1].sub(midPos);
-                                prev[0].draw(
-                                    graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i)));
+                                for (const prev of animationStartPos[id].segments)
+                                {
+                                    let offset = prev[1].sub(midPos);
+                                    prev[0].draw(
+                                        graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i)));
+                                }
                             }
+
+                            /* let easedPos = animationStartPos[id][0][1].lerp(pos, Easings.sin.inout(t - i));
+
+                            animationStartPos[id][0].draw(
+                                graphics, easedPos, textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i))); */
+                            
+                            let offset = pos.sub(endPos);
+                            segment.draw(
+                                graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
                         }
-
-                        /* let easedPos = animationStartPos[id][0][1].lerp(pos, Easings.sin.inout(t - i));
-
-                        animationStartPos[id][0].draw(
-                            graphics, easedPos, textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i))); */
-                        
-                        let offset = pos.sub(endPos);
-                        segment.draw(
-                            graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * Easings.quint.inout(t - i));
                     }
 
                     else
