@@ -134,21 +134,22 @@ var FancyTextAnimations;
             // adjust for justify
             let pos = position.sub(justify.mult(new Vector2(FancyText.getWidth(lines[movingIndex], textSize, font), textSize)));
             pos.y += movingIndex * leading;
+            /**
+             * [First segment, left x-coord of first segment, right x-coord of last segment]
+             */
             let positions = {};
             for (const segment of lines[movingIndex]) {
                 let id = segment.properties.animID;
+                let width = segment.getWidth(textSize, font);
                 if (id)
-                    (positions[id] ??= [segment, []])[1].push(pos.x);
-                pos = pos.withX(pos.x + segment.getWidth(textSize, font));
+                    (positions[id] ??= [segment, pos.x, 0])[2] = pos.x + width;
+                pos = pos.withX(pos.x + width);
             }
             for (const id in positions) {
                 if (Object.prototype.hasOwnProperty.call(positions, id)) {
-                    const list = positions[id];
-                    if (list[1].length == 1) {
-                        animationEndPos[id] = [list[0], new Vector2(list[1][0], pos.y)];
-                        continue;
-                    }
-                    animationEndPos[id] = [list[0], new Vector2((list[1][0] + list[1].at(-1)) / 2, pos.y)];
+                    const animGroup = positions[id];
+                    // Find the center of the segments: avg of left and rightmost points
+                    animationEndPos[id] = [animGroup[0], new Vector2((animGroup[1] + animGroup[2]) / 2, pos.y)];
                 }
             }
         }
@@ -161,10 +162,24 @@ var FancyTextAnimations;
                 for (const segment of line) {
                     segment.draw(graphics, pos, textSize, font, Vector2.zero);
                     let id = segment.properties.animID;
+                    let width = segment.getWidth(textSize, font);
                     // Only add to animationStartPos if this is the last fully animated line
-                    if (id && t < i + 2)
-                        (animationStartPos[id] ??= []).push([segment, pos]);
-                    pos = pos.withX(pos.x + segment.getWidth(textSize, font));
+                    if (id && t < i + 2) {
+                        (animationStartPos[id] ??= { segments: [], centerX: 0 }).segments.push([segment, pos]);
+                        // For now, store rightmost point in centerX
+                        animationStartPos[id].centerX = pos.x + width;
+                    }
+                    pos = pos.withX(pos.x + width);
+                }
+                // Determine the center for all animation groups
+                if (t < i + 2) {
+                    for (const id in animationStartPos) {
+                        if (Object.prototype.hasOwnProperty.call(animationStartPos, id)) {
+                            const group = animationStartPos[id];
+                            // Find the center of the segments: avg of left and rightmost points
+                            group.centerX = (group.segments[0][1].x + group.centerX) / 2;
+                        }
+                    }
                 }
             }
             else if (t >= i) {
@@ -173,16 +188,13 @@ var FancyTextAnimations;
                 for (const segment of line) {
                     let id = segment.properties.animID;
                     if (id && animationStartPos[id]) {
-                        const starts = animationStartPos[id];
                         const endPos = animationEndPos[id][1];
-                        let midX = starts.length > 0 ?
-                            (starts[0][1].x + starts.at(-1)[1].x) / 2
-                            : starts[0][1].x;
+                        const midX = animationStartPos[id].centerX;
                         let midPos = new Vector2(midX, pos.y - leading);
                         let easedPos = midPos.lerp(endPos, Easings.sin.inout(t - i));
                         // Only draw previous ones once
                         if (animationEndPos[id][0] == segment) {
-                            for (const prev of animationStartPos[id]) {
+                            for (const prev of animationStartPos[id].segments) {
                                 let offset = prev[1].sub(midPos);
                                 prev[0].draw(graphics, easedPos.add(offset), textSize, font, Vector2.zero, 255 * (1 - Easings.quint.inout(t - i)));
                             }
@@ -202,16 +214,6 @@ var FancyTextAnimations;
             }
             position = position.withY(position.y + leading);
         }
-        // adjust for justify
-        /* position = position.sub(
-            justify.mult(
-                new Vector2(getWidth(segments, textSize, font), textSize)));
-        for (const segment of segments)
-        {
-            segment.draw(graphics, position, textSize, font, Vector2.zero);
-
-            position = position.withX(position.x + segment.getWidth(textSize, font));
-        } */
     }
     FancyTextAnimations.draw = draw;
 })(FancyTextAnimations || (FancyTextAnimations = {}));
