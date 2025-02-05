@@ -318,7 +318,7 @@ namespace FancyTextAnimations
                 {
                     let ids = (segment.properties as AnimTextProperties).animID;
                     
-                    // There will be nothing to animate from it this is the first line
+                    // There will be nothing to animate from if this is the first line
                     if (ids && i > 0)
                     {
                         for (const id of ids)

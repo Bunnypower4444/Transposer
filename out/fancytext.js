@@ -212,7 +212,7 @@ var FancyTextAnimations;
                 let pos = position.sub(justify.mult(new Vector2(FancyText.getWidth(line, textSize, font), textSize)));
                 for (const segment of line) {
                     let ids = segment.properties.animID;
-                    // There will be nothing to animate from it this is the first line
+                    // There will be nothing to animate from if this is the first line
                     if (ids && i > 0) {
                         for (const id of ids)
                             if (animationStartPos[id]) {

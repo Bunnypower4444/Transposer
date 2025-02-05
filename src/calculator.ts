@@ -127,11 +127,15 @@ class Transposer
             { text: ")", properties: { animID: "op5" } }
         ]));
 
-        // line 3: rearrange
-        // Pf = P₀ - (-I₀ + K₀) + (-If + Kf)
+        // line 3: flip sides
         this.lines.push(FancyTextAnimations.create([
             { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " - (-" + ((endInst < 0) ? "(" : ""), properties: { animID: "op3" } },
+            { text: endInst.toString(), properties: { color: "blue", animID: "If" } },
+            { text: ((endInst < 0) ? ")" : "") + " + ", properties: { animID: "op4" } },
+            { text: endKey.toString(), properties: { color: "red", animID: "Kf" } },
+            { text: ")", properties: { animID: "op5" } },
             { text: " = ", properties: { animID: "op6" } },
 
             { text: pitch.toString(), properties: { color: "green", animID: "P0" } },
@@ -140,37 +144,63 @@ class Transposer
             { text: ((startInst < 0) ? ")" : "") + " + ", properties: { animID: "op1" } },
             { text: startKey.toString(), properties: { color: "red", animID: "K0" } },
             { text: ")", properties: { animID: "op7" } },
-            { text: " + (-" + ((endInst < 0) ? "(" : ""), properties: { animID: "op3" } },
-            { text: endInst.toString(), properties: { color: "blue", animID: "If" } },
-            { text: ((endInst < 0) ? ")" : "") + " + ", properties: { animID: "op4" } },
-            { text: endKey.toString(), properties: { color: "red", animID: "Kf" } },
+        ]));
+
+        // line 4: rearrange (move - (-If + Kf) to the other side)
+        // Pf = P₀ - (-I₀ + K₀) + (-If + Kf)
+        this.lines.push(FancyTextAnimations.create([
+            { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " = ", properties: { animID: "op6" } },
+
+            { text: pitch.toString(), properties: { color: "green", animID: "P0" } },
+            { text: " - ", properties: { animID: ["op0", "op8"] } },
+            { text: "(", properties: { animID: "op0" } },
+            { text: "-" + ((startInst < 0) ? "(" : ""), properties: { animID: ["op0", "I0+K0_0"] } },
+            { text: startInst.toString(), properties: { color: "blue", animID: ["I0", "I0+K0_0"] } },
+            { text: ((startInst < 0) ? ")" : ""), properties: { animID: ["op1", "I0+K0_0"] } },
+            { text: " + ", properties: { animID: "op1" } },
+            { text: startKey.toString(), properties: { color: "red", animID: ["K0", "I0+K0_1"] } },
+            { text: ")", properties: { animID: "op7" } },
+            { text: " + ", properties: { animID: ["op3", "op9"] } },
+            { text: "(", properties: { animID: "op3" } },
+            { text: "-" + ((endInst < 0) ? "(" : ""), properties: { animID: ["op3", "If+Kf_0"] } },
+            { text: endInst.toString(), properties: { color: "blue", animID: ["If", "If+Kf_0"] } },
+            { text: ((endInst < 0) ? ")" : ""), properties: { animID: ["op4", "If+Kf_0"] } },
+            { text: " + ", properties: { animID: "op4" } },
+            { text: endKey.toString(), properties: { color: "red", animID: ["Kf", "If+Kf_1"] } },
             { text: ")", properties: { animID: "op5" } }
         ]));
 
-        // line 4: evaluate parenthesis
+        // line 5: evaluate parenthesis
         this.lines.push(FancyTextAnimations.create([
-            { text: "P", properties: { color: "purple", style: ITALIC } },
-            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
-            { text: " = " },
+            { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " = ", properties: { animID: "op6" } },
 
-            { text: pitch.toString(), properties: { color: "green" } },
-            { text: " - " + ((-startInst + startKey < 0) ? "(" : "") },
-            { text: (-startInst + startKey).toString() },
-            { text: ((-startInst + startKey < 0) ? ")" : "") + " + " },
-            { text: (-endInst + endKey).toString() }
+            { text: pitch.toString(), properties: { color: "green", animID: ["P0", "ans0"] } },
+            { text: " - ", properties: { animID: "op8" } },
+            { text: ((-startInst + startKey < 0) ? "(" : "")
+                    + (-startInst + startKey).toString()
+                    + ((-startInst + startKey < 0) ? ")" : ""),
+                properties: { animID: ["I0+K0_0", "I0+K0_1", "ans1"] } },
+            { text: " + ", properties: { animID: "op9" } },
+            { text: (-endInst + endKey).toString(), properties: { animID: ["If+Kf_0", "If+Kf_1", "ans2"] } }
         ]));
 
-        // line 5: answer
+        // line 6: answer
         let answer = Transposer.transpose(
             pitch,
             startInst, startKey,
             endInst, endKey);
         this.lines.push(FancyTextAnimations.create([
-            { text: "P", properties: { color: "purple", style: ITALIC } },
-            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC } },
+            { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
+            { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
+            { text: " = ", properties: { animID: "op6" } },
+            { text: answer.toString(), properties: { color: "purple", animID: ["ans0", "ans1", "ans2"] } },
             { text: " = " },
 
-            ...Transposer.midiNumToFancyText(answer)
+            ...Transposer.midiNumToFancyText(answer, "purple")
         ]));
     }
 
