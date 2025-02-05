@@ -31,8 +31,7 @@ var FancyText;
         constructor(props) {
             for (const key in props) {
                 if (Object.prototype.hasOwnProperty.call(props, key)) {
-                    const element = props[key];
-                    this[key] = element;
+                    this[key] = props[key];
                 }
             }
         }
@@ -49,20 +48,20 @@ var FancyText;
     class TextSegment {
         text;
         properties;
-        constructor(textOrSegmentData, properties) {
-            if (typeof textOrSegmentData == "string") {
-                this.text = textOrSegmentData;
+        constructor(textOrData, properties) {
+            if (typeof textOrData == "string") {
+                this.text = textOrData;
                 if (!properties)
                     properties = {};
                 this.properties = !(properties instanceof TextProperties) ?
                     new TextProperties(properties) : properties;
             }
             else {
-                this.text = textOrSegmentData.text;
-                if (!textOrSegmentData.properties)
-                    textOrSegmentData.properties = {};
-                this.properties = !(textOrSegmentData.properties instanceof TextProperties) ?
-                    new TextProperties(textOrSegmentData.properties) : textOrSegmentData.properties;
+                this.text = textOrData.text;
+                if (!textOrData.properties)
+                    textOrData.properties = {};
+                this.properties = !(textOrData.properties instanceof TextProperties) ?
+                    new TextProperties(textOrData.properties) : textOrData.properties;
             }
         }
         getWidth(textSize, font) {
@@ -104,22 +103,27 @@ var FancyTextAnimations;
     class AnimTextProperties extends FancyText.TextProperties {
         animID;
         constructor(props) {
-            if (props.animID && typeof props.animID == "string")
-                props.animID = [props.animID];
             super(props);
+            if (!props)
+                return;
+            if (typeof props.animID == "string")
+                props.animID = [props.animID];
+            this.animID = props.animID;
         }
     }
     FancyTextAnimations.AnimTextProperties = AnimTextProperties;
     class AnimTextSegment extends FancyText.TextSegment {
-        constructor(var1, properties) {
-            if (typeof var1 == "string") {
-                super(var1);
+        constructor(textOrData, properties) {
+            if (typeof textOrData == "string") {
+                if (properties instanceof AnimTextProperties)
+                    super(textOrData, properties);
+                else
+                    super(textOrData, new AnimTextProperties(properties));
             }
             else {
-                if (properties instanceof AnimTextProperties)
-                    super(var1, properties);
-                else
-                    super(var1, new AnimTextProperties(properties));
+                if (textOrData.properties && !(textOrData.properties instanceof AnimTextProperties))
+                    textOrData.properties = new AnimTextProperties(textOrData.properties);
+                super(textOrData);
             }
         }
     }
