@@ -29,10 +29,11 @@
 			<br>
 
 			<label for="totalAnimTime">Animation Speed</label>
-			<select id="totalAnimTime">
+			<select id="totalAnimTime" oninput="saveSpeedSettings(Number(this.value));">
 				<option value="6">Slow</option>
 				<option value="3.5" selected>Normal</option>
 				<option value="1">Fast</option>
+				<option value="0">Instant</option>
 			</select>
 
 			<button onclick="calculate();">Calculate!</button>

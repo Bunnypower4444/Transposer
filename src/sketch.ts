@@ -23,6 +23,7 @@ const WindowWidth = 1000;
 const MainFont = "Times New Roman";
 const BackgroundColor = "antiquewhite";
 const FrameRate = 60;
+const StorageAnimTime = "animTime";
 
 function setup()
 {
@@ -31,15 +32,25 @@ function setup()
 
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0") as HTMLCanvasElement);
     frameRate(FrameRate);
+
+    // load anim time settings
+    let savedAnimTime = getItem(StorageAnimTime);
+    if (typeof savedAnimTime == "number" && !NumberUtils.isNullish(savedAnimTime))
+    {
+        (document.getElementById("totalAnimTime") as HTMLSelectElement).value = savedAnimTime.toString();
+    }
 }
 
 function draw()
 {
     background(BackgroundColor);
-
-    animTime += 1 / FrameRate;
+    
+    if (!paused || advanceFrame)
+        animTime += deltaTime / 1000;
+    advanceFrame = false;
+    
     transposer.draw(globalThis, new Vector2(width, height), Vector2.zero, animTime, totalAnimationTime);
-
+    
     // pausing 
     push();
 
@@ -89,6 +100,7 @@ function calculate()
 }
 
 let paused = false;
+let advanceFrame = false;
 // Pause/Unpause
 function keyPressed()
 {
@@ -96,18 +108,14 @@ function keyPressed()
         return;
 
     if (keyCode == ENTER)
-    {
-        paused = !paused
-        if (paused)
-            noLoop();
-        else
-            loop();
-    }
+        paused = !paused;
     else if (keyCode == 32)
-    {
-        redraw();
-    }
+        advanceFrame = true;
 }
 
+function saveSpeedSettings(animTime: number)
+{
+    storeItem(StorageAnimTime, Number(animTime));
+}
 
 //#endregion
