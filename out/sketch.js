@@ -1,3 +1,8 @@
+//#region Imports
+var Vector2 = p5Utils.Vector2;
+var FancyText = p5Utils.Ext.FancyText;
+var FancyTextAnimations = p5Utils.Ext.FancyTextAnimations;
+//#endregion
 //#region Globals
 // MIDI key number
 let startingPitch = MiddleC;
@@ -19,12 +24,12 @@ const FrameRate = 60;
 const StorageAnimTime = "animTime";
 function setup() {
     // Setup the canvas
-    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
+    let canvasSize = p5Utils.CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0"));
     frameRate(FrameRate);
     // load anim time settings
     let savedAnimTime = getItem(StorageAnimTime);
-    if (typeof savedAnimTime == "number" && !NumberUtils.isNullish(savedAnimTime)) {
+    if (typeof savedAnimTime == "number" && !p5Utils.NumberUtils.isNullish(savedAnimTime)) {
         document.getElementById("totalAnimTime").value = savedAnimTime.toString();
     }
 }

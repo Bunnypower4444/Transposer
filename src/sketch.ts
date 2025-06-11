@@ -1,4 +1,12 @@
 
+//#region Imports
+
+import Vector2 = p5Utils.Vector2;
+import FancyText = p5Utils.Ext.FancyText;
+import FancyTextAnimations = p5Utils.Ext.FancyTextAnimations;
+
+//#endregion
+
 //#region Globals
 
 // MIDI key number
@@ -28,14 +36,14 @@ const StorageAnimTime = "animTime";
 function setup()
 {
     // Setup the canvas
-    let canvasSize = CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
+    let canvasSize = p5Utils.CanvasUtils.aspectToSize(WindowAspect, WindowWidth, null);
 
     createCanvas(canvasSize.x, canvasSize.y, document.getElementById("defaultCanvas0") as HTMLCanvasElement);
     frameRate(FrameRate);
 
     // load anim time settings
     let savedAnimTime = getItem(StorageAnimTime);
-    if (typeof savedAnimTime == "number" && !NumberUtils.isNullish(savedAnimTime))
+    if (typeof savedAnimTime == "number" && !p5Utils.NumberUtils.isNullish(savedAnimTime))
     {
         (document.getElementById("totalAnimTime") as HTMLSelectElement).value = savedAnimTime.toString();
     }
