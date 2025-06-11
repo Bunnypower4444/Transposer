@@ -12,9 +12,6 @@
     { "path": "../p5Utils" }
   ],
   "include": [
-    // ADD REFERENCE TO p5-vscode .d.ts FILE FOR p5.js TYPE INFORMATION
-    // If you have the extension, it is probably located at:
-    //  /Users/[USER]/.vscode/extensions/samplavigne.p5-vscode-[VERSION (MAJOR.MINOR)].*/p5types/global.d.ts
     "src/*.ts",
     "src/**/*.ts"
   ],
