@@ -96,7 +96,7 @@ class Transposer {
         this.lines = [];
         // line 1: formula
         // P₀ - (-I₀ + K₀) = Pf - (-If + Kf)
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: "P", properties: { color: "green", style: ITALIC, animID: "P0" } },
             { text: "0", properties: { color: "green", script: Script.Subscript, animID: "P0" } },
             { text: " - (-", properties: { animID: "op0" } },
@@ -117,7 +117,7 @@ class Transposer {
             { text: ")", properties: { animID: "op5" } }
         ]));
         // line 2: substitution
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: pitch.toString(), properties: { color: "green", animID: "P0" } },
             { text: " - (-" + ((startInst < 0) ? "(" : ""), properties: { animID: "op0" } },
             { text: startInst.toString(), properties: { color: "blue", animID: "I0" } },
@@ -134,7 +134,7 @@ class Transposer {
             { text: ")", properties: { animID: "op5" } }
         ]));
         // line 3: flip sides
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
             { text: " - (-" + ((endInst < 0) ? "(" : ""), properties: { animID: "op3" } },
@@ -152,7 +152,7 @@ class Transposer {
         ]));
         // line 4: rearrange (move - (-If + Kf) to the other side)
         // Pf = P₀ - (-I₀ + K₀) + (-If + Kf)
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
             { text: " = ", properties: { animID: "op6" } },
@@ -175,7 +175,7 @@ class Transposer {
             { text: ")", properties: { animID: "op5" } }
         ]));
         // line 5: evaluate parenthesis
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
             { text: " = ", properties: { animID: "op6" } },
@@ -190,7 +190,7 @@ class Transposer {
         ]));
         // line 6: answer
         let answer = Transposer.transpose(pitch, startInst, startKey, endInst, endKey);
-        this.lines.push(FancyTextAnimations.create([
+        this.lines.push(FancyText.Animations.create([
             { text: "P", properties: { color: "purple", style: ITALIC, animID: "Pf" } },
             { text: "f", properties: { color: "purple", script: Script.Subscript, style: ITALIC, animID: "Pf" } },
             { text: " = ", properties: { animID: "op6" } },
@@ -224,7 +224,7 @@ class Transposer {
                 new Vector2(sizeBounds.x / 2, position.y + leading * (i + 0.5))),
                 size, MainFont, new Vector2(0.5, 0.5));
         } */
-        FancyTextAnimations.draw(graphics, this.lines, position.add(new Vector2(sizeBounds.x / 2, Padding)), 24, MainFont, this.lines.length * time / animTime, new Vector2(0.5, 0.5));
+        FancyText.Animations.draw(graphics, this.lines, position.add(new Vector2(sizeBounds.x / 2, Padding)), 24, MainFont, this.lines.length * time / animTime, new Vector2(0.5, 0.5));
         graphics.pop();
     }
 }

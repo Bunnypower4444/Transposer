@@ -3,7 +3,6 @@
 
 import Vector2 = p5Utils.Vector2;
 import FancyText = p5Utils.Ext.FancyText;
-import FancyTextAnimations = p5Utils.Ext.FancyTextAnimations;
 
 //#endregion
 

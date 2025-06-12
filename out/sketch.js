@@ -1,7 +1,6 @@
 //#region Imports
 var Vector2 = p5Utils.Vector2;
 var FancyText = p5Utils.Ext.FancyText;
-var FancyTextAnimations = p5Utils.Ext.FancyTextAnimations;
 //#endregion
 //#region Globals
 // MIDI key number
